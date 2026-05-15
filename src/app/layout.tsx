@@ -1,35 +1,38 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Syne } from "next/font/google";
+import { Cormorant_Garamond, Cinzel, Manrope } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Header } from "@/components/site/header";
-import { Footer } from "@/components/site/footer";
 
-const display = Instrument_Serif({
+const display = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["300", "400", "600"],
+  style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
 
-const syne = Syne({
+const heading = Cinzel({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const sans = Manrope({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-sans",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Maison Noir — Luxury beauty & editorial",
-    template: "%s · Maison Noir",
+    default: "Verdura -- Where Nature Meets Elegance",
+    template: "%s -- Verdura",
   },
   description:
-    "Luxury hair and beauty studio with an editorial modeling portfolio — Los Angeles. Salon precision, campaign presence.",
-  openGraph: {
-    title: "Maison Noir Studio",
-    description: "Luxury beauty studio and fashion-forward editorial model.",
-  },
+    "Rare gemstones. Certified luxury. Timeless craftsmanship. Verdura is the world's premier gemstone marketplace featuring GIA-certified emeralds, rubies, sapphires, and diamonds.",
 };
 
 export default function RootLayout({
@@ -39,11 +42,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${display.variable} ${syne.variable} font-sans antialiased`}>
+      <body
+        className={`${display.variable} ${heading.variable} ${sans.variable} font-sans antialiased h-screen overflow-hidden`}
+      >
         <ThemeProvider>
           <Header />
-          <main className="min-h-dvh">{children}</main>
-          <Footer />
+          <main className="h-screen overflow-hidden">{children}</main>
         </ThemeProvider>
       </body>
     </html>

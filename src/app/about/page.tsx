@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { About } from "@/components/sections/about";
-import { SocialStrip } from "@/components/sections/social-strip";
+import { AboutLandscape } from "@/components/sections/about-landscape";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "The story and philosophy behind Maison Noir — luxury beauty and editorial model.",
+  title: "Our World",
+  description: "The Verdura story -- ethical mining, sustainability, and luxury craftsmanship since 2012.",
 };
 
 export default function AboutPage() {
-  return (
-    <div className="pt-6">
-      <About />
-      <SocialStrip />
-    </div>
-  );
+  return <AboutLandscape />;
 }
