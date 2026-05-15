@@ -1,8 +1,48 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+
+function SparkleParticle({ delay, x, y, size }: { delay: number; x: string; y: string; size: number }) {
+  return (
+    <motion.div
+      className="absolute pointer-events-none"
+      style={{ left: x, top: y }}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
+      transition={{ duration: 2, delay, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <svg width={size} height={size} viewBox="0 0 20 20">
+        <line x1="10" y1="0" x2="10" y2="20" stroke="#D4AF37" strokeWidth="1.5" />
+        <line x1="0" y1="10" x2="20" y2="10" stroke="#D4AF37" strokeWidth="1.5" />
+        <line x1="3" y1="3" x2="17" y2="17" stroke="#D4AF37" strokeWidth="0.8" />
+        <line x1="17" y1="3" x2="3" y2="17" stroke="#D4AF37" strokeWidth="0.8" />
+      </svg>
+    </motion.div>
+  );
+}
+
+function FloatingGem({ delay, x, y, color, size }: { delay: number; x: string; y: string; color: string; size: number }) {
+  return (
+    <motion.div
+      className="absolute pointer-events-none"
+      style={{ left: x, top: y }}
+      animate={{
+        y: [0, -15, 0, 10, 0],
+        rotate: [0, 5, -5, 3, 0],
+        opacity: [0.4, 0.7, 0.5, 0.8, 0.4],
+      }}
+      transition={{ duration: 8, delay, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <svg width={size} height={size * 1.2} viewBox="0 0 30 36">
+        <polygon points="15,0 30,12 24,36 6,36 0,12" fill={color} opacity="0.7" />
+        <polygon points="15,0 30,12 15,18 0,12" fill="white" opacity="0.15" />
+        <line x1="15" y1="0" x2="15" y2="36" stroke="white" strokeWidth="0.3" opacity="0.3" />
+      </svg>
+    </motion.div>
+  );
+}
 
 export function HeroEmerald() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -11,15 +51,17 @@ export function HeroEmerald() {
     offset: ["start start", "end start"],
   });
   const vignette = useTransform(scrollYProgress, [0, 0.8], [1, 0.4]);
-  const mx = useSpring(0, { stiffness: 26, damping: 18 });
-  const my = useSpring(0, { stiffness: 26, damping: 18 });
+  const mx = useSpring(0, { stiffness: 20, damping: 15 });
+  const my = useSpring(0, { stiffness: 20, damping: 15 });
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const onMove = (e: MouseEvent) => {
       const nx = (e.clientX / window.innerWidth - 0.5) * 2;
       const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-      mx.set(nx * 8);
-      my.set(ny * 6);
+      mx.set(nx * 12);
+      my.set(ny * 8);
     };
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
@@ -27,70 +69,77 @@ export function HeroEmerald() {
 
   return (
     <section ref={sectionRef} className="relative min-h-[100dvh] overflow-hidden">
-      {/* Split layout */}
       <div className="grid min-h-[100dvh] lg:grid-cols-[45%_55%]">
-        {/* LEFT PANEL - Emerald green with botanical watermarks */}
-        <div className="relative flex flex-col justify-center overflow-hidden bg-[#0F3D2E] px-6 pb-20 pt-28 sm:px-10 md:px-14 lg:pb-8 lg:pt-24">
-          {/* Botanical watermark pattern */}
-          <div className="pointer-events-none absolute inset-0 bg-botanical opacity-60" aria-hidden />
-          {/* Gradient overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0F3D2E]/40 via-transparent to-[#0F3D2E]/60" aria-hidden />
+        {/* ── LEFT PANEL ── */}
+        <div className="relative flex flex-col justify-center overflow-hidden bg-gradient-to-br from-[#0C3425] via-[#0F3D2E] to-[#0A2A1E] px-6 pb-24 pt-28 sm:px-10 md:px-14 lg:pb-8 lg:pt-24">
+          {/* Multi-layer botanical watermark */}
+          <div className="pointer-events-none absolute inset-0 bg-botanical opacity-50" aria-hidden />
+          <div className="pointer-events-none absolute inset-0 bg-botanical opacity-30" style={{ backgroundSize: "180px", transform: "rotate(15deg) scale(1.2)" }} aria-hidden />
+          {/* Gradient overlays for depth */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0F3D2E]/60 via-transparent to-[#0A2A1E]/80" aria-hidden />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-[#00C853]/[0.03] to-transparent" aria-hidden />
+          {/* Radial light source */}
+          <div className="pointer-events-none absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(212,175,55,0.06)_0%,transparent_70%)]" aria-hidden />
 
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 max-w-lg"
           >
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              className="mb-5 font-heading text-[10px] font-medium uppercase tracking-[0.35em] text-[#D4AF37]/90"
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="mb-6 font-heading text-[10px] font-medium uppercase tracking-[0.4em] text-[#D4AF37]"
             >
               Verdura Jewellery &middot; Est. MMXII
             </motion.p>
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.9 }}
-              className="font-display text-[clamp(2.8rem,5vw,4.5rem)] font-light leading-[1.08] text-[#F0EAD6]"
+              transition={{ delay: 0.5, duration: 1 }}
+              className="font-display text-[clamp(3rem,5.5vw,5rem)] font-light leading-[1.05] tracking-[-0.01em] text-[#F0EAD6]"
             >
               Where Nature
               <br />
-              Meets <em className="italic text-[#D4AF37]">Elegance</em>
+              Meets{" "}
+              <em className="italic bg-gradient-to-r from-[#F5DFA0] via-[#D4AF37] to-[#C9A227] bg-clip-text text-transparent">
+                Elegance
+              </em>
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="mt-6 max-w-sm text-[0.82rem] font-light leading-[1.8] text-white/55"
+              transition={{ delay: 0.7, duration: 0.8 }}
+              className="mt-7 max-w-[360px] text-[0.84rem] font-light leading-[1.85] text-white/50"
             >
               Rare gemstones. Certified luxury. Timeless craftsmanship -- each
               stone a story written by the earth itself over millions of years.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.75 }}
-              className="mt-8 flex flex-wrap items-center gap-3"
+              transition={{ delay: 0.9, duration: 0.8 }}
+              className="mt-10 flex flex-wrap items-center gap-3"
             >
               <Link
                 href="/gemstones"
-                className="group relative overflow-hidden border border-[#D4AF37] bg-[#D4AF37] px-7 py-3 font-heading text-[10px] font-medium uppercase tracking-[0.2em] text-[#0B0B0B] transition-all duration-400 hover:bg-transparent hover:text-[#D4AF37]"
+                className="group relative overflow-hidden border border-[#D4AF37] bg-[#D4AF37] px-8 py-3.5 font-heading text-[10px] font-medium uppercase tracking-[0.2em] text-[#0B0B0B] transition-all duration-500 hover:bg-transparent hover:text-[#D4AF37] hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]"
               >
                 <span className="relative z-10">Shop Jewelry</span>
+                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               </Link>
               <Link
                 href="/gemstones"
-                className="border border-[#D4AF37]/40 bg-transparent px-7 py-3 font-heading text-[10px] font-medium uppercase tracking-[0.2em] text-[#F0EAD6] transition-all duration-400 hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                className="border border-[#D4AF37]/30 bg-transparent px-8 py-3.5 font-heading text-[10px] font-medium uppercase tracking-[0.2em] text-[#F0EAD6]/80 transition-all duration-500 hover:border-[#D4AF37] hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.15)]"
               >
                 Explore Gemstones
               </Link>
               <Link
                 href="/contact"
-                className="border border-[#D4AF37]/40 bg-transparent px-7 py-3 font-heading text-[10px] font-medium uppercase tracking-[0.2em] text-[#F0EAD6] transition-all duration-400 hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                className="border border-white/15 bg-transparent px-8 py-3.5 font-heading text-[10px] font-medium uppercase tracking-[0.2em] text-white/60 transition-all duration-500 hover:border-[#D4AF37]/50 hover:text-[#D4AF37]"
               >
                 Book Consultation
               </Link>
@@ -99,221 +148,396 @@ export function HeroEmerald() {
 
           {/* Hero stats */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.8 }}
-            className="relative z-10 mt-auto flex gap-8 pt-12 lg:gap-12"
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="relative z-10 mt-auto flex gap-10 pt-16 lg:gap-14"
           >
             {[
               { num: "2,400+", label: "Certified Gems" },
               { num: "180+", label: "Countries Served" },
               { num: "GIA", label: "Certified Partner" },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="font-display text-2xl font-light text-[#D4AF37]">
+            ].map((s, i) => (
+              <div key={s.label} className="group">
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.3 + i * 0.15, duration: 0.6 }}
+                  className="font-display text-[clamp(1.5rem,2.5vw,2rem)] font-light text-[#D4AF37] transition-colors group-hover:text-[#E8C547]"
+                >
                   {s.num}
-                </div>
-                <div className="mt-1 font-heading text-[9px] tracking-[0.2em] text-white/45">
+                </motion.div>
+                <div className="mt-1.5 font-heading text-[8px] tracking-[0.22em] text-white/35 uppercase">
                   {s.label}
                 </div>
               </div>
             ))}
           </motion.div>
+
+          {/* Gold accent line at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
         </div>
 
-        {/* RIGHT PANEL - Emerald gemstone animation */}
-        <div className="relative hidden overflow-hidden bg-[#DDE4C8] lg:flex lg:items-center lg:justify-center">
-          {/* Radial glow */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse at 50% 40%, rgba(0,200,83,0.15) 0%, transparent 50%), radial-gradient(ellipse at 60% 60%, rgba(212,175,55,0.1) 0%, transparent 50%)",
-            }}
-            aria-hidden
-          />
+        {/* ── RIGHT PANEL ── */}
+        <div className="relative hidden overflow-hidden lg:flex lg:items-center lg:justify-center"
+          style={{
+            background: "linear-gradient(135deg, #E8E5D8 0%, #DDE4C8 30%, #D5DCBE 60%, #CED8B8 100%)"
+          }}
+        >
+          {/* Ambient light layers */}
+          <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 35%, rgba(0,200,83,0.12) 0%, transparent 55%)" }} aria-hidden />
+          <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse at 60% 55%, rgba(212,175,55,0.08) 0%, transparent 45%)" }} aria-hidden />
+          <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(circle at 30% 70%, rgba(0,200,83,0.06) 0%, transparent 40%)" }} aria-hidden />
 
-          {/* Volumetric green glow behind gem */}
+          {/* Volumetric green glow - pulsing */}
           <motion.div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full animate-pulse-glow"
-            style={{ background: "radial-gradient(circle, rgba(0,200,83,0.3) 0%, transparent 70%)" }}
+            className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(0,200,83,0.25) 0%, rgba(0,200,83,0.08) 40%, transparent 70%)" }}
+            animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.8, 0.5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             aria-hidden
           />
 
-          {/* Rotating outer ring */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] animate-spin-slow opacity-20">
-            <svg viewBox="0 0 500 500" className="w-full h-full">
-              <circle cx="250" cy="250" r="220" fill="none" stroke="#D4AF37" strokeWidth="0.5" strokeDasharray="8 12" />
-              <circle cx="250" cy="250" r="190" fill="none" stroke="#D4AF37" strokeWidth="0.3" strokeDasharray="4 16" />
+          {/* Gold glow ring */}
+          <motion.div
+            className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 60%)" }}
+            animate={{ scale: [1.05, 0.95, 1.05], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            aria-hidden
+          />
+
+          {/* Rotating outer decorative rings */}
+          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] animate-spin-slow opacity-15">
+            <svg viewBox="0 0 520 520" className="w-full h-full">
+              <circle cx="260" cy="260" r="245" fill="none" stroke="#D4AF37" strokeWidth="0.5" strokeDasharray="4 12" />
+              <circle cx="260" cy="260" r="230" fill="none" stroke="#D4AF37" strokeWidth="0.3" strokeDasharray="2 18" />
+              <circle cx="260" cy="260" r="210" fill="none" stroke="#00C853" strokeWidth="0.3" strokeDasharray="6 20" opacity="0.4" />
             </svg>
           </div>
 
-          {/* Main emerald gemstone SVG */}
-          <motion.div
-            style={{ x: mx, y: my }}
-            className="relative z-10"
-          >
+          {/* Inner static rings */}
+          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-10">
+            <svg viewBox="0 0 400 400" className="w-full h-full">
+              <circle cx="200" cy="200" r="190" fill="none" stroke="#D4AF37" strokeWidth="0.8" />
+              <circle cx="200" cy="200" r="170" fill="none" stroke="#D4AF37" strokeWidth="0.4" strokeDasharray="8 6" />
+            </svg>
+          </div>
+
+          {/* Main emerald gemstone */}
+          <motion.div style={{ x: mx, y: my }} className="relative z-10">
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-              className="animate-gem-breathe"
+              initial={{ scale: 0.7, opacity: 0, rotate: -5 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              transition={{ delay: 0.4, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <svg viewBox="0 0 400 480" width="340" height="408" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <radialGradient id="heroEmeraldGrad" cx="35%" cy="30%" r="65%">
-                    <stop offset="0%" stopColor="#6DBF67" />
-                    <stop offset="35%" stopColor="#2E7D32" />
-                    <stop offset="70%" stopColor="#1B5E20" />
-                    <stop offset="100%" stopColor="#0A3A12" />
-                  </radialGradient>
-                  <radialGradient id="innerGlow" cx="40%" cy="35%" r="50%">
-                    <stop offset="0%" stopColor="rgba(102,187,106,0.6)" />
-                    <stop offset="100%" stopColor="rgba(27,94,32,0)" />
-                  </radialGradient>
-                  <linearGradient id="goldEdge" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#F5DFA0" />
-                    <stop offset="50%" stopColor="#D4AF37" />
-                    <stop offset="100%" stopColor="#8B6914" />
-                  </linearGradient>
-                  <filter id="emeraldGlow">
-                    <feGaussianBlur stdDeviation="8" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                  <filter id="softGlow">
-                    <feGaussianBlur stdDeviation="4" />
-                  </filter>
-                </defs>
+              <motion.div
+                animate={{
+                  scale: [1, 1.03, 1],
+                  y: [0, -6, 0],
+                  rotate: [0, 0.5, -0.5, 0],
+                }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <svg viewBox="0 0 440 540" width="380" height="465" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    {/* Main gem gradient - rich emerald */}
+                    <radialGradient id="heg" cx="38%" cy="28%" r="68%">
+                      <stop offset="0%" stopColor="#7CCD7A" />
+                      <stop offset="20%" stopColor="#4CAF50" />
+                      <stop offset="45%" stopColor="#2E7D32" />
+                      <stop offset="70%" stopColor="#1B5E20" />
+                      <stop offset="100%" stopColor="#0A3A12" />
+                    </radialGradient>
+                    {/* Inner luminosity */}
+                    <radialGradient id="hig" cx="42%" cy="35%" r="45%">
+                      <stop offset="0%" stopColor="rgba(124,205,122,0.5)" />
+                      <stop offset="50%" stopColor="rgba(46,125,50,0.2)" />
+                      <stop offset="100%" stopColor="rgba(27,94,32,0)" />
+                    </radialGradient>
+                    {/* Gold edge gradient */}
+                    <linearGradient id="hge" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#F5DFA0" />
+                      <stop offset="30%" stopColor="#D4AF37" />
+                      <stop offset="70%" stopColor="#C9A227" />
+                      <stop offset="100%" stopColor="#8B6914" />
+                    </linearGradient>
+                    {/* Glow filter */}
+                    <filter id="eglow" x="-30%" y="-30%" width="160%" height="160%">
+                      <feGaussianBlur stdDeviation="12" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                    {/* Soft shadow */}
+                    <filter id="eshadow">
+                      <feDropShadow dx="0" dy="8" stdDeviation="20" floodColor="#0A3A12" floodOpacity="0.4" />
+                    </filter>
+                    {/* Highlight shimmer */}
+                    <linearGradient id="hshimmer" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                      <stop offset="50%" stopColor="rgba(255,255,255,0.3)" />
+                      <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                    </linearGradient>
+                  </defs>
 
-                {/* Outer glow ring */}
-                <ellipse cx="200" cy="240" rx="180" ry="200" fill="none" stroke="rgba(0,200,83,0.1)" strokeWidth="1" />
-                <ellipse cx="200" cy="240" rx="160" ry="180" fill="none" stroke="rgba(212,175,55,0.08)" strokeWidth="0.5" />
+                  {/* Drop shadow ellipse */}
+                  <ellipse cx="220" cy="510" rx="100" ry="12" fill="rgba(10,58,18,0.15)" filter="url(#eshadow)" />
 
-                {/* Main emerald body - octagonal emerald cut */}
-                <polygon
-                  points="200,40 280,80 320,160 320,320 280,400 200,440 120,400 80,320 80,160 120,80"
-                  fill="url(#heroEmeraldGrad)"
-                  filter="url(#emeraldGlow)"
-                />
-                {/* Gold edge outline */}
-                <polygon
-                  points="200,40 280,80 320,160 320,320 280,400 200,440 120,400 80,320 80,160 120,80"
-                  fill="none"
-                  stroke="url(#goldEdge)"
-                  strokeWidth="2"
-                />
+                  {/* Outer glow aura */}
+                  <polygon
+                    points="220,30 310,75 355,170 355,370 310,465 220,510 130,465 85,370 85,170 130,75"
+                    fill="rgba(0,200,83,0.08)"
+                    filter="url(#eglow)"
+                  />
 
-                {/* Facet lines */}
-                <line x1="200" y1="40" x2="200" y2="440" stroke="rgba(255,255,255,0.12)" strokeWidth="0.8" />
-                <line x1="80" y1="240" x2="320" y2="240" stroke="rgba(255,255,255,0.12)" strokeWidth="0.8" />
-                <line x1="120" y1="80" x2="280" y2="400" stroke="rgba(255,255,255,0.07)" strokeWidth="0.8" />
-                <line x1="280" y1="80" x2="120" y2="400" stroke="rgba(255,255,255,0.07)" strokeWidth="0.8" />
+                  {/* Main gem body */}
+                  <polygon
+                    points="220,40 305,82 345,172 345,368 305,458 220,500 135,458 95,368 95,172 135,82"
+                    fill="url(#heg)"
+                    filter="url(#eshadow)"
+                  />
 
-                {/* Inner table facet */}
-                <polygon
-                  points="200,120 250,150 260,240 250,330 200,360 150,330 140,240 150,150"
-                  fill="rgba(102,187,106,0.25)"
-                  stroke="rgba(255,255,255,0.08)"
-                  strokeWidth="0.5"
-                />
+                  {/* Gold bezel edge */}
+                  <polygon
+                    points="220,40 305,82 345,172 345,368 305,458 220,500 135,458 95,368 95,172 135,82"
+                    fill="none"
+                    stroke="url(#hge)"
+                    strokeWidth="2.5"
+                  />
 
-                {/* Inner glow */}
-                <ellipse cx="200" cy="220" rx="80" ry="100" fill="url(#innerGlow)" />
+                  {/* Secondary inner edge */}
+                  <polygon
+                    points="220,55 295,92 330,172 330,368 295,448 220,485 145,448 110,368 110,172 145,92"
+                    fill="none"
+                    stroke="rgba(212,175,55,0.2)"
+                    strokeWidth="0.8"
+                  />
 
-                {/* Top highlight reflection */}
-                <polygon
-                  points="200,45 260,78 290,130 240,110 180,85"
-                  fill="rgba(255,255,255,0.2)"
-                />
+                  {/* FACET STRUCTURE */}
+                  {/* Main axes */}
+                  <line x1="220" y1="40" x2="220" y2="500" stroke="rgba(255,255,255,0.1)" strokeWidth="0.8" />
+                  <line x1="95" y1="270" x2="345" y2="270" stroke="rgba(255,255,255,0.1)" strokeWidth="0.8" />
+                  {/* Diagonal facets */}
+                  <line x1="135" y1="82" x2="305" y2="458" stroke="rgba(255,255,255,0.06)" strokeWidth="0.6" />
+                  <line x1="305" y1="82" x2="135" y2="458" stroke="rgba(255,255,255,0.06)" strokeWidth="0.6" />
+                  {/* Cross facets */}
+                  <line x1="95" y1="172" x2="345" y2="368" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
+                  <line x1="345" y1="172" x2="95" y2="368" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
 
-                {/* Secondary highlights */}
-                <polygon
-                  points="200,50 220,65 230,100 210,90 195,70"
-                  fill="rgba(255,255,255,0.15)"
-                />
+                  {/* Table facet (center) */}
+                  <polygon
+                    points="220,120 275,155 285,270 275,385 220,420 165,385 155,270 165,155"
+                    fill="rgba(76,175,80,0.2)"
+                    stroke="rgba(255,255,255,0.06)"
+                    strokeWidth="0.5"
+                  />
 
-                {/* Sparkle points */}
-                <circle cx="160" cy="120" r="3" fill="#D4AF37" opacity="0.9">
-                  <animate attributeName="opacity" values="0.9;0.2;0.9" dur="2s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="260" cy="350" r="2.5" fill="#D4AF37" opacity="0.7">
-                  <animate attributeName="opacity" values="0.7;0.1;0.7" dur="2.5s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="110" cy="260" r="2" fill="#F5DFA0" opacity="0.6">
-                  <animate attributeName="opacity" values="0.6;0.15;0.6" dur="3s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="290" cy="180" r="2" fill="#FFFFFF" opacity="0.5">
-                  <animate attributeName="opacity" values="0.5;0.1;0.5" dur="1.8s" repeatCount="indefinite" />
-                </circle>
+                  {/* Crown facets (top section) */}
+                  <polygon points="220,40 305,82 275,155 220,120 165,155 135,82" fill="rgba(124,205,122,0.15)" />
+                  <polygon points="305,82 345,172 285,270 275,155" fill="rgba(46,125,50,0.12)" />
+                  <polygon points="135,82 165,155 155,270 95,172" fill="rgba(27,94,32,0.15)" />
 
-                {/* Light dispersion / rainbow refraction */}
-                <line x1="200" y1="40" x2="340" y2="10" stroke="rgba(255,100,100,0.15)" strokeWidth="1.5" />
-                <line x1="200" y1="40" x2="360" y2="30" stroke="rgba(100,180,255,0.12)" strokeWidth="1.5" />
-                <line x1="200" y1="40" x2="60" y2="15" stroke="rgba(255,215,0,0.12)" strokeWidth="1.5" />
+                  {/* Pavilion facets (bottom section) */}
+                  <polygon points="220,500 305,458 275,385 220,420 165,385 135,458" fill="rgba(10,58,18,0.25)" />
+                  <polygon points="305,458 345,368 285,270 275,385" fill="rgba(10,58,18,0.2)" />
+                  <polygon points="135,458 165,385 155,270 95,368" fill="rgba(10,58,18,0.3)" />
 
-                {/* Floating sparkle stars */}
-                <g opacity="0.8">
-                  <line x1="340" y1="100" x2="340" y2="88" stroke="#D4AF37" strokeWidth="1.5">
-                    <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" />
-                  </line>
-                  <line x1="334" y1="94" x2="346" y2="94" stroke="#D4AF37" strokeWidth="1.5">
-                    <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" />
-                  </line>
-                </g>
-                <g opacity="0.6">
-                  <line x1="70" y1="350" x2="70" y2="340" stroke="#D4AF37" strokeWidth="1">
-                    <animate attributeName="opacity" values="0;0.8;0" dur="2.5s" begin="0.5s" repeatCount="indefinite" />
-                  </line>
-                  <line x1="65" y1="345" x2="75" y2="345" stroke="#D4AF37" strokeWidth="1">
-                    <animate attributeName="opacity" values="0;0.8;0" dur="2.5s" begin="0.5s" repeatCount="indefinite" />
-                  </line>
-                </g>
-              </svg>
+                  {/* Inner luminous glow */}
+                  <ellipse cx="220" cy="250" rx="90" ry="120" fill="url(#hig)" />
+
+                  {/* PRIMARY HIGHLIGHT - top left reflection */}
+                  <polygon
+                    points="220,45 285,78 310,130 260,115 195,80"
+                    fill="rgba(255,255,255,0.22)"
+                  />
+                  <polygon
+                    points="220,48 250,68 265,105 235,95 210,72"
+                    fill="rgba(255,255,255,0.18)"
+                  />
+
+                  {/* Secondary highlight spots */}
+                  <ellipse cx="175" cy="140" rx="20" ry="12" fill="rgba(255,255,255,0.12)" transform="rotate(-20 175 140)" />
+                  <ellipse cx="280" cy="380" rx="15" ry="8" fill="rgba(255,255,255,0.06)" transform="rotate(15 280 380)" />
+
+                  {/* SPARKLE POINTS with animations */}
+                  <circle cx="160" cy="110" r="3.5" fill="#D4AF37" opacity="0.9">
+                    <animate attributeName="opacity" values="0.9;0.15;0.9" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="r" values="3.5;2;3.5" dur="2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="290" cy="400" r="3" fill="#D4AF37" opacity="0.7">
+                    <animate attributeName="opacity" values="0.7;0.1;0.7" dur="2.8s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="108" cy="280" r="2.5" fill="#F5DFA0" opacity="0.6">
+                    <animate attributeName="opacity" values="0.6;0.1;0.6" dur="3.2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="320" cy="200" r="2.5" fill="white" opacity="0.5">
+                    <animate attributeName="opacity" values="0.5;0.05;0.5" dur="2.2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="220" cy="60" r="2" fill="#E8C547" opacity="0.8">
+                    <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.8s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="140" cy="430" r="2" fill="#D4AF37" opacity="0.5">
+                    <animate attributeName="opacity" values="0.5;0.1;0.5" dur="3s" repeatCount="indefinite" />
+                  </circle>
+
+                  {/* LIGHT DISPERSION - rainbow refraction rays */}
+                  <line x1="220" y1="40" x2="380" y2="-10" stroke="rgba(255,80,80,0.12)" strokeWidth="1.5" />
+                  <line x1="220" y1="40" x2="400" y2="15" stroke="rgba(80,160,255,0.1)" strokeWidth="1.5" />
+                  <line x1="220" y1="40" x2="50" y2="-5" stroke="rgba(255,215,0,0.1)" strokeWidth="1.5" />
+                  <line x1="220" y1="40" x2="30" y2="20" stroke="rgba(180,100,255,0.08)" strokeWidth="1.5" />
+
+                  {/* Sparkle stars */}
+                  <g opacity="0.9">
+                    <line x1="370" y1="90" x2="370" y2="74" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;1;0" dur="2.5s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="362" y1="82" x2="378" y2="82" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;1;0" dur="2.5s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="365" y1="75" x2="375" y2="89" stroke="#D4AF37" strokeWidth="0.8" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;0.7;0" dur="2.5s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="375" y1="75" x2="365" y2="89" stroke="#D4AF37" strokeWidth="0.8" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;0.7;0" dur="2.5s" repeatCount="indefinite" />
+                    </line>
+                  </g>
+                  <g opacity="0.7">
+                    <line x1="65" y1="400" x2="65" y2="388" stroke="#D4AF37" strokeWidth="1" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;0.8;0" dur="3s" begin="1s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="59" y1="394" x2="71" y2="394" stroke="#D4AF37" strokeWidth="1" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;0.8;0" dur="3s" begin="1s" repeatCount="indefinite" />
+                    </line>
+                  </g>
+                  <g opacity="0.6">
+                    <line x1="350" y1="460" x2="350" y2="450" stroke="#E8C547" strokeWidth="1" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;0.6;0" dur="2.8s" begin="0.5s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="345" y1="455" x2="355" y2="455" stroke="#E8C547" strokeWidth="1" strokeLinecap="round">
+                      <animate attributeName="opacity" values="0;0.6;0" dur="2.8s" begin="0.5s" repeatCount="indefinite" />
+                    </line>
+                  </g>
+
+                  {/* Crown prong details (gold setting) */}
+                  <circle cx="220" cy="40" r="4" fill="#D4AF37" />
+                  <circle cx="305" cy="82" r="3.5" fill="#D4AF37" />
+                  <circle cx="345" cy="172" r="3.5" fill="#C9A227" />
+                  <circle cx="345" cy="368" r="3.5" fill="#C9A227" />
+                  <circle cx="305" cy="458" r="3.5" fill="#8B6914" />
+                  <circle cx="220" cy="500" r="4" fill="#8B6914" />
+                  <circle cx="135" cy="458" r="3.5" fill="#8B6914" />
+                  <circle cx="95" cy="368" r="3.5" fill="#C9A227" />
+                  <circle cx="95" cy="172" r="3.5" fill="#C9A227" />
+                  <circle cx="135" cy="82" r="3.5" fill="#D4AF37" />
+                </svg>
+              </motion.div>
             </motion.div>
           </motion.div>
 
-          {/* Glassmorphism floating particles */}
+          {/* Scattered sparkle particles */}
+          {mounted && (
+            <>
+              <SparkleParticle delay={0} x="15%" y="20%" size={16} />
+              <SparkleParticle delay={1.5} x="80%" y="15%" size={14} />
+              <SparkleParticle delay={0.8} x="85%" y="70%" size={12} />
+              <SparkleParticle delay={2.2} x="10%" y="75%" size={14} />
+              <SparkleParticle delay={3} x="50%" y="85%" size={10} />
+              <SparkleParticle delay={1} x="25%" y="45%" size={10} />
+              <SparkleParticle delay={2.5} x="72%" y="40%" size={12} />
+            </>
+          )}
+
+          {/* Floating small gem particles */}
+          {mounted && (
+            <>
+              <FloatingGem delay={0} x="8%" y="30%" color="#2E7D32" size={18} />
+              <FloatingGem delay={2} x="88%" y="60%" color="#C62828" size={14} />
+              <FloatingGem delay={1} x="82%" y="25%" color="#1565C0" size={16} />
+              <FloatingGem delay={3} x="12%" y="65%" color="#D4AF37" size={12} />
+            </>
+          )}
+
+          {/* GLASSMORPHISM FLOATING INFO CARDS */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="absolute bottom-20 left-8 rounded-lg glass px-4 py-3 animate-float"
-            style={{ animationDelay: "0s" }}
+            transition={{ delay: 1.4, duration: 0.9 }}
+            className="absolute bottom-24 left-8 z-20"
           >
-            <div className="font-heading text-[8px] tracking-[0.15em] text-[#D4AF37]">GIA CERTIFIED</div>
-            <div className="mt-0.5 text-[10px] text-white/60">4.82ct VVS Colombian</div>
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="rounded-lg border border-white/10 bg-[#0F3D2E]/60 backdrop-blur-xl px-5 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+            >
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#00C853] animate-pulse" />
+                <span className="font-heading text-[8px] tracking-[0.18em] text-[#D4AF37]">GIA CERTIFIED</span>
+              </div>
+              <div className="mt-1 text-[11px] font-light text-white/55">4.82ct VVS Colombian Emerald</div>
+              <div className="mt-0.5 text-[9px] text-[#00C853]/60">Est. Value: $48,200</div>
+            </motion.div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.8 }}
-            className="absolute top-32 right-10 rounded-lg glass px-4 py-3 animate-float"
-            style={{ animationDelay: "2s" }}
+            transition={{ delay: 1.6, duration: 0.9 }}
+            className="absolute top-36 right-10 z-20"
           >
-            <div className="font-heading text-[8px] tracking-[0.15em] text-[#00C853]">BLOCKCHAIN VERIFIED</div>
-            <div className="mt-0.5 text-[10px] text-white/60">0xA4F2...9C3B</div>
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+              className="rounded-lg border border-[#00C853]/20 bg-[#0A2A1E]/70 backdrop-blur-xl px-5 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+            >
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#D4AF37]" />
+                <span className="font-heading text-[8px] tracking-[0.18em] text-[#00C853]">BLOCKCHAIN VERIFIED</span>
+              </div>
+              <div className="mt-1 font-mono text-[10px] text-white/45">0xA4F2...9C3B</div>
+              <div className="mt-0.5 text-[9px] text-[#D4AF37]/50">Provenance: Muzo Mine, Colombia</div>
+            </motion.div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6, duration: 0.8 }}
-            className="absolute top-1/2 right-6 rounded-lg glass px-3 py-2 animate-float"
-            style={{ animationDelay: "4s" }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.8, duration: 0.9 }}
+            className="absolute top-[50%] right-6 z-20"
           >
-            <div className="text-[9px] text-[#D4AF37]">RI: 1.765</div>
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+              className="rounded-lg border border-[#D4AF37]/15 bg-[#0F3D2E]/50 backdrop-blur-xl px-4 py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
+            >
+              <div className="font-mono text-[10px] text-[#D4AF37]">RI: 1.765</div>
+              <div className="text-[8px] text-white/30">Refractive Index</div>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2, duration: 0.9 }}
+            className="absolute bottom-40 right-16 z-20"
+          >
+            <motion.div
+              animate={{ y: [0, -7, 0] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+              className="rounded-lg border border-white/8 bg-[#0A2A1E]/50 backdrop-blur-xl px-4 py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
+            >
+              <div className="font-heading text-[8px] tracking-[0.15em] text-[#D4AF37]/80">RARITY SCORE</div>
+              <div className="mt-0.5 font-display text-lg text-white/70">92<span className="text-[10px] text-white/30">/100</span></div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
 
-      {/* Bottom gradient fade */}
+      {/* Bottom vignette for mobile */}
       <motion.div
         style={{ opacity: vignette }}
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0B0B0B]/30 to-transparent lg:hidden"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0B0B0B]/40 to-transparent lg:hidden"
         aria-hidden
       />
     </section>
