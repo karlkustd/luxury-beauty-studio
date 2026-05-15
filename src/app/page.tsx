@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
-import { HomeCinematicHero } from "@/components/sections/home-cinematic-hero";
-import { HomeWorlds } from "@/components/sections/home-worlds";
-import { SocialStrip } from "@/components/sections/social-strip";
+import { HeroEmerald } from "@/components/sections/hero-emerald";
+import { MarqueeStrip } from "@/components/sections/marquee-strip";
+import { GemCollection } from "@/components/sections/gem-collection";
+import { GemologistSection } from "@/components/sections/gemologist-section";
+import { MarketplaceSection } from "@/components/sections/marketplace-section";
+import { AboutEthical } from "@/components/sections/about-ethical";
+import { TestimonialsSection } from "@/components/sections/testimonials-section";
+import { NewsletterSection } from "@/components/sections/newsletter-section";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "Verdura -- Where Nature Meets Elegance",
   description:
-    "Maison Noir — luxury beauty studio and editorial model. Cinematic portfolio, salon services, and private booking.",
+    "The premier luxury gemstone marketplace. GIA-certified emeralds, rubies, sapphires and diamonds with blockchain verification and ethical sourcing.",
 };
 
 export default function Home() {
   return (
     <>
-      <HomeCinematicHero />
-      <HomeWorlds />
-      <SocialStrip />
+      <HeroEmerald />
+      <MarqueeStrip />
+      <GemCollection />
+      <GemologistSection />
+      <MarketplaceSection />
+      <AboutEthical />
+      <TestimonialsSection />
+      <NewsletterSection />
     </>
   );
 }

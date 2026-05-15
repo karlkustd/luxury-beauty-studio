@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { BookContact } from "@/components/sections/book-contact";
-import { ShopTeaser } from "@/components/sections/shop-teaser";
+import { ContactForm } from "@/components/sections/contact-form";
 
 export const metadata: Metadata = {
-  title: "Contact & booking",
-  description: "Book Maison Noir — luxury beauty studio and editorial inquiries.",
+  title: "Contact",
+  description:
+    "Get in touch with Verdura. Book a gem consultation, inquire about custom designs, or visit our showrooms worldwide.",
 };
 
 export default function ContactPage() {
-  return (
-    <div className="pt-8">
-      <BookContact />
-      <ShopTeaser />
-    </div>
-  );
+  return <ContactForm />;
 }

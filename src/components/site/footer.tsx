@@ -1,67 +1,135 @@
 import Link from "next/link";
-import { Wordmark } from "@/components/brand/wordmark";
 
-const links = [
-  { href: "/modeling", label: "Modeling" },
-  { href: "/salon", label: "Salon · Hair" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/contact#book", label: "Book" },
+const shopLinks = [
+  { href: "/gemstones", label: "Gemstones" },
+  { href: "/jewelry", label: "Jewelry" },
+  { href: "#", label: "Engagement" },
+  { href: "#", label: "Bridal Collections" },
+  { href: "#", label: "Limited Editions" },
+];
+
+const serviceLinks = [
+  { href: "/contact", label: "Gem Consultation" },
+  { href: "#", label: "Custom Design" },
+  { href: "/certification", label: "Certification" },
+  { href: "/marketplace", label: "Marketplace" },
+  { href: "#", label: "AI Valuation" },
+];
+
+const companyLinks = [
+  { href: "/about", label: "Our World" },
+  { href: "#", label: "Ethical Sourcing" },
+  { href: "#", label: "Press" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function Footer() {
   return (
-    <footer className="border-t border-black/10 bg-[#f5f0e8] py-16 text-neutral-800 dark:border-white/10 dark:bg-[#060606] dark:text-white/80">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:grid-cols-[1.2fr_1fr_1fr] sm:px-6">
-        <div>
-          <div className="scale-90 origin-left">
-            <Wordmark size="md" href="/" />
+    <footer className="border-t border-[#D4AF37]/10 bg-[#0A2A1E] dark:bg-[#060606]">
+      {/* Animated divider */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+
+      <div className="mx-auto max-w-7xl px-4 pt-16 pb-8 sm:px-6 lg:px-8">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+          {/* Brand */}
+          <div>
+            <div className="font-heading text-xl tracking-[0.3em] text-[#D4AF37]">
+              VERDURA
+            </div>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/40">
+              Where nature meets elegance. Certified rare gemstones, ethical
+              sourcing, and luxury craftsmanship since 2012.
+            </p>
+            <div className="mt-6 flex items-center gap-3">
+              {["Instagram", "Pinterest", "WeChat", "WhatsApp"].map((s) => (
+                <a
+                  key={s}
+                  href="#"
+                  className="font-heading text-[9px] tracking-[0.15em] text-white/35 transition-colors hover:text-[#D4AF37]"
+                >
+                  {s}
+                </a>
+              ))}
+            </div>
           </div>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-600 dark:text-white/55">
-            Luxury beauty studio and editorial model portfolio — Los Angeles. Magazine-grade presentation with salon
-            warmth when you need it.
-          </p>
+
+          {/* Shop */}
+          <div>
+            <div className="font-heading text-[10px] tracking-[0.2em] text-[#D4AF37] mb-4">
+              SHOP
+            </div>
+            <ul className="space-y-2">
+              {shopLinks.map((l) => (
+                <li key={l.label}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-white/40 transition-colors hover:text-[#D4AF37]"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <div className="font-heading text-[10px] tracking-[0.2em] text-[#D4AF37] mb-4">
+              SERVICES
+            </div>
+            <ul className="space-y-2">
+              {serviceLinks.map((l) => (
+                <li key={l.label}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-white/40 transition-colors hover:text-[#D4AF37]"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <div className="font-heading text-[10px] tracking-[0.2em] text-[#D4AF37] mb-4">
+              COMPANY
+            </div>
+            <ul className="space-y-2">
+              {companyLinks.map((l) => (
+                <li key={l.label}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-white/40 transition-colors hover:text-[#D4AF37]"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="text-sm">
-          <p className="font-semibold uppercase tracking-[0.25em] text-neutral-500 dark:text-white/45">Explore</p>
-          <ul className="mt-4 space-y-2">
-            {links.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href} className="text-neutral-700 transition hover:text-[#9a7b2e] dark:text-white/70 dark:hover:text-[#c9a962]">
-                  {l.label}
-                </Link>
-              </li>
+
+        {/* Bottom */}
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-[#D4AF37]/8 pt-6 sm:flex-row">
+          <span className="text-[11px] text-white/20">
+            &copy; {new Date().getFullYear()} Verdura Jewellery. All rights
+            reserved. GIA Certified Partner.
+          </span>
+          <div className="flex gap-6">
+            {["Instagram", "Pinterest", "WeChat", "WhatsApp"].map((s) => (
+              <a
+                key={s}
+                href="#"
+                className="font-heading text-[9px] tracking-[0.15em] text-white/25 transition-colors hover:text-[#D4AF37]"
+              >
+                {s}
+              </a>
             ))}
-            <li>
-              <Link href="/about" className="text-neutral-700 transition hover:text-[#9a7b2e] dark:text-white/70 dark:hover:text-[#c9a962]">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="text-neutral-700 transition hover:text-[#9a7b2e] dark:text-white/70 dark:hover:text-[#c9a962]">
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="text-sm">
-          <p className="font-semibold uppercase tracking-[0.25em] text-neutral-500 dark:text-white/45">Studio</p>
-          <p className="mt-4 text-neutral-700 dark:text-white/70">Los Angeles · By appointment</p>
-          <a href="mailto:book@maisonnoir.studio" className="mt-2 block text-[#9a7b2e] hover:underline dark:text-[#c9a962]">
-            book@maisonnoir.studio
-          </a>
-          <div className="mt-4 flex flex-col gap-1">
-            <a href="#" className="hover:text-[#9a7b2e] dark:hover:text-[#c9a962]">
-              Instagram
-            </a>
-            <a href="#" className="hover:text-[#9a7b2e] dark:hover:text-[#c9a962]">
-              TikTok
-            </a>
           </div>
         </div>
       </div>
-      <p className="mx-auto mt-14 max-w-6xl px-4 text-center text-xs text-neutral-500 dark:text-white/40 sm:px-6">
-        © {new Date().getFullYear()} Maison Noir Studio. All rights reserved.
-      </p>
     </footer>
   );
 }
