@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { GemCollection } from "@/components/sections/gem-collection";
-import { PageHero } from "@/components/sections/page-hero";
+import { JewelryLandscape } from "@/components/sections/jewelry-landscape";
 
 export const metadata: Metadata = {
   title: "Jewelry",
@@ -8,15 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function JewelryPage() {
-  return (
-    <>
-      <PageHero
-        eyebrow="LUXURY JEWELRY"
-        title="Heirloom"
-        titleAccent="Masterpieces"
-        subtitle="Each piece is handcrafted in our Geneva atelier by master artisans with generations of expertise, using only the finest certified gemstones."
-      />
-      <GemCollection />
-    </>
-  );
+  return <JewelryLandscape />;
 }

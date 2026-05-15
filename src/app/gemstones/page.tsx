@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { GemCollection } from "@/components/sections/gem-collection";
-import { MarqueeStrip } from "@/components/sections/marquee-strip";
-import { PageHero } from "@/components/sections/page-hero";
+import { GemstonesLandscape } from "@/components/sections/gemstones-landscape";
 
 export const metadata: Metadata = {
   title: "Gemstones",
@@ -9,16 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function GemstonesPage() {
-  return (
-    <>
-      <PageHero
-        eyebrow="THE COLLECTION"
-        title="Rare Gemstones"
-        titleAccent="Certified"
-        subtitle="Browse our curated selection of the world's finest GIA-certified gemstones. Each stone is hand-selected, ethically sourced, and blockchain verified."
-      />
-      <MarqueeStrip />
-      <GemCollection />
-    </>
-  );
+  return <GemstonesLandscape />;
 }
